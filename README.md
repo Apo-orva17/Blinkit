@@ -1,4 +1,4 @@
-
+# BlinkIt - E-Commerce Platform
 
 A full-stack e-commerce application built with React and Node.js, featuring user authentication, product management, shopping cart, and order processing.
 
@@ -7,7 +7,8 @@ A full-stack e-commerce application built with React and Node.js, featuring user
 - Project Structure
 - Features
 - Tech Stack
-- Installation
+- Prerequisites
+- Installation & Setup
 - Configuration
 - Running the Project
 - API Endpoints
@@ -35,7 +36,8 @@ Blinkit/
     ├── utils/              # Helper functions
     ├── index.js
     ├── package.json
-    └── .env
+    ├── .env                # Environment variables (create this)
+    └── .env.example        # Example environment variables
 ```
 
 ## ✨ Features
@@ -86,73 +88,120 @@ Blinkit/
 - **CORS** - Cross-origin requests
 - **Multer** - File upload handling
 
-## 📦 Installation
+## 📋 Prerequisites
 
-### Prerequisites
-- Node.js (v14+)
-- MongoDB Atlas account
-- Cloudinary account
-- Resend API key
+Before you begin, ensure you have:
 
-### Backend Setup
+- **Node.js** (v14 or higher)
+- **npm** or **yarn** package manager
+- **MongoDB Atlas** account (free tier available at [mongodb.com](https://www.mongodb.com/cloud/atlas))
+- **Cloudinary** account (free tier available at [cloudinary.com](https://cloudinary.com))
+- **Resend** account for email service (free tier available at [resend.com](https://resend.com))
+
+## 📦 Installation & Setup
+
+### Step 1: Clone the Repository
+
+```bash
+git clone <repository-url>
+cd Blinkit
+```
+
+### Step 2: Backend Setup
+
+Navigate to the server directory:
 
 ```bash
 cd server
 npm install
 ```
 
-### Frontend Setup
+### Step 3: Configure Backend Environment Variables
 
-```bash
-cd client
-npm install
-```
+**⚠️ IMPORTANT: Create .env file before running the server**
 
-## ⚙️ Configuration
-
-Create a .env file in the server directory:
+1. In the server folder, create a new file named .env
+2. Copy the following template and fill in your actual values:
 
 ```env
 FRONTEND_URL=http://localhost:3000
 MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/?appName=Blinkit
 RESEND_API=your_resend_api_key
-SECRET_KEY_ACCESS_TOKEN=your_access_token_secret
-SECRET_KEY_REFRESH_TOKEN=your_refresh_token_secret
+SECRET_KEY_ACCESS_TOKEN=your_access_token_secret_key
+SECRET_KEY_REFRESH_TOKEN=your_refresh_token_secret_key
 CLOUDINARY_NAME=your_cloudinary_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 PORT=8080
 ```
 
+#### 🔐 Getting Your Environment Variables
+
+**MongoDB URI:**
+1. Go to [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+2. Create a cluster
+3. Click "Connect" → "Drivers" → Copy connection string
+4. Replace `<username>`, `<password>`, and `<cluster>` with your details
+
+**Resend API Key:**
+1. Sign up at [Resend](https://resend.com)
+2. Go to API Keys section
+3. Copy your API key
+
+**Cloudinary Credentials:**
+1. Sign up at [Cloudinary](https://cloudinary.com)
+2. Go to Dashboard
+3. Copy your Cloud Name, API Key, and API Secret
+
+**Secret Keys:**
+- Generate random strings for `SECRET_KEY_ACCESS_TOKEN` and `SECRET_KEY_REFRESH_TOKEN`
+- Use a random string generator or: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
+
+### Step 4: Frontend Setup
+
+Navigate to the client directory:
+
+```bash
+cd ../client
+npm install
+```
+
 ## 🚀 Running the Project
 
-### Backend (Development)
+### Start Backend Server
 
 ```bash
 cd server
 npm run dev
 ```
 
-Server runs on `http://localhost:8080`
+The server will run on `http://localhost:8080`
 
-### Frontend (Development)
+You should see:
+```
+MONGODB connected successfully
+```
+
+### Start Frontend (in a new terminal)
 
 ```bash
 cd client
 npm run dev
 ```
 
-Client runs on `http://localhost:5173`
+The frontend will run on `http://localhost:5173`
 
-### Production Build
+## 🏗️ Production Build
 
-**Frontend:**
+### Build Frontend
+
 ```bash
 cd client
 npm run build
 ```
 
-**Backend:**
+### Start Backend in Production
+
 ```bash
 cd server
 npm start
@@ -160,61 +209,75 @@ npm start
 
 ## 📡 API Endpoints
 
-### User Routes (`/api/user`)
+### User Routes
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/register` | Register new user |
-| POST | `/verify-email` | Verify email address |
-| POST | `/login` | User login |
-| GET | `/logout` | User logout (requires auth) |
-| PUT | `/upload-avatar` | Upload profile avatar (requires auth) |
-| PUT | `/update-user` | Update user details (requires auth) |
-| PUT | `/forgot-password` | Request password reset OTP |
-| PUT | `/verify-forgot-password-otp` | Verify OTP |
-| PUT | `/reset-password` | Reset password |
-| POST | `/refresh-token` | Refresh access token |
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---|
+| POST | `/api/user/register` | Register new user | No |
+| POST | `/api/user/verify-email` | Verify email address | No |
+| POST | `/api/user/login` | User login | No |
+| GET | `/api/user/logout` | User logout | Yes |
+| PUT | `/api/user/upload-avatar` | Upload profile avatar | Yes |
+| PUT | `/api/user/update-user` | Update user details | Yes |
+| PUT | `/api/user/forgot-password` | Request password reset OTP | No |
+| PUT | `/api/user/verify-forgot-password-otp` | Verify OTP for password reset | No |
+| PUT | `/api/user/reset-password` | Reset password | No |
+| POST | `/api/user/refresh-token` | Refresh access token | No |
 
 ## 💾 Database Models
 
 ### User Model
-- name, email, password
-- avatar, mobile
-- refresh_token, verify_email
-- last_login_date, status
-- address_details, shopping_cart, orderHistory
-- forgot_password_otp, forogot_password_expiry
-- role (ADMIN/USER)
+- `name`, `email`, `password` (hashed)
+- `avatar`, `mobile`
+- `refresh_token`, `verify_email`
+- `last_login_date`, `status`
+- `address_details`, `shopping_cart`, `orderHistory`
+- `forgot_password_otp`, `forgot_password_expiry`
+- `role` (ADMIN/USER)
 
 ### Product Model
-- name, image, category, subCategory
-- unit, stock, price, discount
-- description, more_details
-- publish status
+- `name`, `image`, `category`, `subCategory`
+- `unit`, `stock`, `price`, `discount`
+- `description`, `more_details`
+- `publish` status
 
 ### Order Model
-- userId, orderId, productId
-- product_details, paymentId, payment_status
-- delivery_address, subTotalAmt, totalAmt
-- invoice_receipt
+- `userId`, `orderId`, `productId`
+- `product_details`, `paymentId`, `payment_status`
+- `delivery_address`, `subTotalAmt`, `totalAmt`
+- `invoice_receipt`
 
 ### Category & SubCategory
-- name, image
+- `name`, `image`
 
 ### Address Model
-- address_line, city, state, pincode
-- country, mobile, status
+- `address_line`, `city`, `state`, `pincode`
+- `country`, `mobile`, `status`
 
 ### Cart Product Model
-- productId, quantity, userId
+- `productId`, `quantity`, `userId`
 
-## 📝 Notes
+## 📝 Important Notes
 
-- Access tokens expire in 5 hours
-- Refresh tokens expire in 30 days
-- Password reset OTP valid for 1 hour
-- Images stored in Cloudinary
-- Emails sent via Resend service
+- ⏱️ Access tokens expire in 15 minutes
+- ⏱️ Refresh tokens expire in 7 days
+- ⏱️ Password reset OTP valid for 1 hour
+- 🖼️ Images are stored in Cloudinary
+- 📧 Emails are sent via Resend service
+- 🔒 Never commit .env file to version control
+
+## ❓ Troubleshooting
+
+**MongoDB Connection Error:**
+- Verify your .env file has the correct `MONGODB_URI`
+- Add your IP address to MongoDB Atlas Network Access whitelist
+
+**Email not sending:**
+- Check that `RESEND_API` is correct
+- Verify sender email is verified in Resend dashboard
+
+**Cloudinary errors:**
+- Confirm `CLOUDINARY_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET` are correct
 
 ---
 
